@@ -1,0 +1,35 @@
+TIENDA - LISTA PARA RAILWAY (parte 5)
+=======================================================
+
+Es tienda-base despues de aplicar la presentacion completa.
+
+Abrir en IntelliJ
+  File > Open > esta carpeta. IntelliJ detecta pom.xml y carga Maven
+  (si pregunta, elegir "Maven project"). Esperar la descarga de librerias.
+
+Ejecutar en IntelliJ
+  src/Main.java > triangulo verde  ->  http://localhost:4567/health
+
+Rutas (usuarios; productos tiene las mismas)
+  GET    /usuarios          listar
+  GET    /usuarios/:id      buscar uno (404 si no existe)
+  POST   /usuarios          crear      body: {"id":2,"nombre":"Ana","email":"ana@eam.edu.co"}
+  PATCH  /usuarios/:id      cambiar solo lo enviado  body: {"email":"ana.m@eam.edu.co"}
+  DELETE /usuarios/:id      eliminar
+
+Docker
+  1. Pestana Maven > Lifecycle > clean y luego package
+     (crea target/tienda-api-1.0-jar-with-dependencies.jar)
+  2. docker build -t tienda-api .
+  3. docker volume create datos_tienda
+  4. docker run -d -p 4567:4567 -v datos_tienda:/app/data --name tienda tienda-api
+  5. Probar: http://localhost:4567/health
+  Ver logs: docker logs tienda      Detener: docker stop tienda      Iniciar: docker start tienda
+  Antes de correr el contenedor, detener la API de IntelliJ (mismo puerto 4567).
+
+Cambios para Railway (parte 5)
+  - src/api/TiendaApi.java: el puerto se lee de la variable PORT (4567 si no existe).
+  - Dockerfile de dos etapas: compila con Maven dentro de Docker (no hace falta target/).
+  - .gitignore y .dockerignore.
+  Probar en el PC:  docker build -t tienda-railway .
+                    docker run --rm -p 8080:8080 -e PORT=8080 tienda-railway
